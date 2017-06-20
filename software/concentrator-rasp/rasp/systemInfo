@@ -1,0 +1,161 @@
+#!/usr/bin/python
+#
+# Software do diagnostyki Raspberry Pi
+#
+# Author : Damian Karbowiak
+# Company: Silesian Softing
+#
+# Date   : 20/06/2017
+#
+#---------------------------------------------------------------------------#
+# Import bibliotek
+#---------------------------------------------------------------------------#
+import subprocess
+import os
+import time
+
+dirTmp = "/tmp/ss-afa"
+dirTmpOdroid = "/tmp/ss-afa/rasp"
+
+
+#---------------------------------------------------------------------------#
+# Funkcje
+#---------------------------------------------------------------------------#
+# funkcja sprawdza czy dana sciezka istenieje i zaklada ja w razie potrzeby
+def checkPathAndCreate(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+# funkcja aktualizuje wskazany plik podana zawartoscia
+def updateFile(file, content):
+    dataFile = open(dirTmpOdroid + file, 'w')
+    dataFile.write(content)
+    dataFile.close()
+
+
+# funkcja zwraca aktualne zuzycie RAMu i jego dostepna ilosc
+def get_ram():
+    s = subprocess.check_output(["free", "-h"])
+    lines = s.split('\n')
+    return (lines[1].split()[2], lines[1].split()[1])
+
+
+# funkcja zwraca aktualne zuzycie RAMu i jego dostepna ilosc
+def get_df():
+    s = subprocess.check_output(["df", "-h"])
+    return (s)
+
+
+# funkcja zwraca aktualna date i godzine
+def get_datetime():
+    s = subprocess.check_output(["date"])
+    return (s)
+
+
+# TODO do wykorzystania
+def get_ps():
+    s = subprocess.check_output(["ps", "-e"])
+    return len(s.split('\n'))
+
+
+# TODO do wykorzystania
+def get_ps_py():
+    proc = subprocess.Popen("ps aux | grep py", shell=True, stdout=subprocess.PIPE)
+    output = proc.communicate()[0]
+    ps_value = ""
+    for line in output.split('\n'):
+        ps_value = ps_value + line
+    return output
+
+
+# funkcja zwraca aktualny czas dzialania systemu
+def get_uptime():
+    s = subprocess.check_output(["uptime"])
+    load_split = s.split('load average: ')
+    up = load_split[0]
+    up_pos = up.rfind(',', 0, len(up) - 4)
+    up = up[:up_pos].split('up ')[1]
+    return (up)
+
+
+def get_temperature():
+    try:
+        s = subprocess.check_output(["cat", "/sys/devices/virtual/thermal/thermal_zone0/temp"])
+        return float(s) / 1000
+    except:
+        return 0
+
+
+# funkcja pobiera adres ip urzadzenia
+def get_ipaddress():
+    arg = 'ip route list'
+    p = subprocess.Popen(arg, shell=True, stdout=subprocess.PIPE)
+    data = p.communicate()
+    split_data = data[0].split()
+    ipaddr = split_data[split_data.index('src') + 1]
+    return ipaddr
+
+
+def get_freq():
+    return (0,0,0,0)
+    f0 = subprocess.check_output(["cat", "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq"])
+    cpu0 = float(f0) / 1000
+    f1 = subprocess.check_output(["cat", "/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq"])
+    cpu1 = float(f1) / 1000
+    f2 = subprocess.check_output(["cat", "/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq"])
+    cpu2 = float(f2) / 1000
+    f3 = subprocess.check_output(["cat", "/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq"])
+    cpu3 = float(f3) / 1000
+    return (cpu0, cpu1, cpu2, cpu3)
+
+#---------------------------------------------------------------------------#
+# Kod wlasciwy
+#---------------------------------------------------------------------------#
+checkPathAndCreate(dirTmp)
+checkPathAndCreate(dirTmpOdroid)
+
+temperaturaLast = freqLast = ramLast = uptimeLast = datetimeLast = ipLast = dfLast = ps_pyLast = ""
+
+while(1):
+    temperatura = str(get_temperature())
+    if temperatura != temperaturaLast:
+        updateFile("/temperature.data", temperatura)
+        temperaturaLast = temperatura
+
+    freq = str(get_freq())
+    if freq != freqLast:
+        updateFile("/freq.data", freq)
+        freqLast = freq
+
+    ram = get_ram()[0] + '/' + get_ram()[1]
+    if ram != ramLast:
+        updateFile("/ram.data", ram)
+        ramLast = ram
+
+    uptime = get_uptime()
+    if uptime != uptimeLast:
+        updateFile("/uptime.data", uptime)
+        uptimeLast = uptime
+
+    datetime = get_datetime()
+    if datetime != datetimeLast:
+        updateFile("/datetime.data", datetime)
+        datetimeLast = datetime
+
+    ip = get_ipaddress()
+    if ip != ipLast:
+        updateFile("/ip.data", ip)
+        ipLast = ip
+
+    df = get_df()
+    if df != dfLast:
+        updateFile("/df.data", df)
+        dfLast = df
+
+    ps_py = get_ps_py()
+    if ps_py != ps_pyLast:
+        updateFile("/ps_py.data", str(ps_py))
+        ps_pyLast = ps_py
+
+    time.sleep(1)
