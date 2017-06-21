@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Skrypt otwiera poprzez edytor nano plik konfiguracyjny
+#
+# Author : Damian Karbowiak
+# Company: Silesian Softings
+#
+# Date   : 20/06/2017
+#
+
+nano /opt/ss/testo/config.cfg

@@ -1,0 +1,16 @@
+#!/usr/bin/python
+#
+# Software to run main loop of Testo Concentrator
+#
+# Author : Damian Karbowiak
+# Company: Silesian Softing
+#
+# Date   : 20/06/2017
+#
+#-------------------------------------------------------------------------------------------------------------#
+# Import bibliotek
+#-------------------------------------------------------------------------------------------------------------#
+from ss_afa_tc import TestoConcentrator
+
+testo = TestoConcentrator.TestoConcentrator()
+testo.main()
