@@ -9,6 +9,12 @@
 # Date   : 08/05/2017
 #
 
+# instalacja bibliotek python'a z plikow egg
+echo "Usuwanie starych bibliotek Python'a"
+sudo pip uninstall -y ss-afa-tc
+echo "Instalacja nowych bibliotek Python'a"
+sudo easy_install testo/lib/*
+
 # backup konfiguracji
 #cp /opt/ss/testo/config.cfg testo/config.cfg
 

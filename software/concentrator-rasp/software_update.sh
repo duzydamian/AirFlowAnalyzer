@@ -43,7 +43,7 @@ l=false
 c=false
 ipf=false
 portf=false
-ip_default=192.168.1.23
+ip_default=192.168.1.100
 port_default=22
 revision=$(git rev-list --count HEAD)
 #revision=1
@@ -90,15 +90,22 @@ if $c; then
 		rm ss-afa/* -R
 	fi
 
+	echo "Compiling programs"
+	echo "PYTHON"
+	#cd nav/*/src; pwd; python setup.py bdist_egg --exclude-source-files; cd ../../..
+	cd testo-concentrator/src; python setup.py bdist_egg --exclude-source-files --version $version.$revision; cd ../..
+
 	echo "Copy required files"
 	cp install_script.sh update_script.sh environment ss-afa/
 	cp html ss-afa/ -R
 	insertDataToHtml 'vvv' $version
 	insertDataToHtml 'rrr' $revision
 	checkPathAndCreate ss-afa/testo
+	checkPathAndCreate ss-afa/testo/lib
 	checkPathAndCreate ss-afa/rasp
 
-	cp testo/* ss-afa/testo/ -v
+	cp testo-concentrator/src/Testo* ss-afa/testo/ -v
+	cp testo-concentrator/src/dist/* ss-afa/testo/lib/ -v
 	cp rasp/* ss-afa/rasp/ -v
 
 	echo "Create archive"
