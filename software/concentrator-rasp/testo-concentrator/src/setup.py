@@ -7,7 +7,7 @@
 #
 
 ##################################################################################################################
-# IMPORT BIBLIOTEK
+# IMPORT LIBRARY
 ##################################################################################################################
 import os
 import sys
@@ -25,7 +25,7 @@ checkPathAndRemove(here+"/dist")
 #CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 if "--version" in sys.argv:
-    wersja = sys.argv.pop(sys.argv.index("--version")+1)
+    ver = sys.argv.pop(sys.argv.index("--version")+1)
     sys.argv.remove("--version") 
         
 requires = [
@@ -35,7 +35,7 @@ requires = [
 
 setup(
     name='ss-afa-tc',
-    version=wersja,
+    version=ver,
     description='Testo Concentrator software to run on Raspberry Pi for example to get and collect data from many sensors.',
     #long_description=README + '\n\n' + CHANGES,
     classifiers=[

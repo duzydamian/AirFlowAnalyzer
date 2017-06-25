@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Skrypt otwiera poprzez edytor nano plik konfiguracyjny
+# Script opens cofnig file with nano editor
 #
 # Author : Damian Karbowiak
 # Company: Silesian Softings
