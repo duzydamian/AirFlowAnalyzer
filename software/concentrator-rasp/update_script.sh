@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Skrypt wywoływany na urządzeniu
+# Script executed on device
 #
 # Author : Damian Karbowiak
 # Company: Silesian Softing.
@@ -9,26 +9,26 @@
 # Date   : 08/05/2017
 #
 
-# instalacja bibliotek python'a z plikow egg
-echo "Usuwanie starych bibliotek Python'a"
+# Instalation python libraries from egg files
+echo "Removing old python libs"
 sudo pip uninstall -y ss-afa-tc
-echo "Instalacja nowych bibliotek Python'a"
+echo "Instaling  new python libss"
 sudo easy_install testo/lib/*
 
-# backup konfiguracji
+# Configuration backup
 #cp /opt/ss/testo/config.cfg testo/config.cfg
 
-# czyszczenie lokalizacji docelowych
+# clening destination localizations
 rm /var/www/html/* -R
 rm /opt/ss/testo/* -R
 rm /opt/ss/rasp/* -R
 
-# kopiowanie nowych plików
+# Coping new files
 cp html/* /var/www/html/ -R
 cp testo/* /opt/ss/testo/
 cp rasp/* /opt/ss/rasp/
 
-# linkowanie dla przedniej kamery
+# linking for www interface
 ln -s /tmp/ss-afa/current/temp_datetime.data /var/www/html/testo/temp_datetime
 ln -s /tmp/ss-afa/current/temp_value.data /var/www/html/testo/temp_value
 ln -s /tmp/ss-afa/current/velo_datetime.data /var/www/html/testo/velo_datetime
@@ -37,7 +37,7 @@ ln -s /tmp/ss-afa/current/bat_datetime.data /var/www/html/testo/bat_datetime
 ln -s /tmp/ss-afa/current/bat_value.data /var/www/html/testo/bat_value
 ln -s /tmp/ss-afa/current/status.data /var/www/html/testo/status
 
-# linkowanie dla diagnostyki
+# linking to diagnose
 ln -s /tmp/ss-afa/rasp/datetime.data /var/www/html/rasp/datetime
 ln -s /tmp/ss-afa/rasp/temperature.data /var/www/html/rasp/temperature
 ln -s /tmp/ss-afa/rasp/freq.data /var/www/html/rasp/freq

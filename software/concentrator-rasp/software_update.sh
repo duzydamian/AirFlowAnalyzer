@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 # Testo
-# Skrypt aktualizuje katalogi install/update, a następnie je archiwizuje
-# Następnie zależnie od parametru wysyła do urządzenia i wykonuje procees instalacji lub aktualizacji
+# Script update software package and create archive
+# Next depend on parameter send to device and install or update
 #
 # Author : Damian Karbowiak
 # Company: Silesian Softing
@@ -11,14 +11,14 @@
 # Date   : 08/05/2017
 #
 
-# ABY WYELIMINOWAĆ POTRZEBĘ KLEPANIA HASŁA ZA KAŻDYM RAZEM TRZEBA 
-# WYWOŁAĆ ODPOWIEDNIE KOMENDY, 192.168.94.25 IP DOCELOWE
+# IF YOU DON'T WANT TO ENETER SSH PASSWORD EVERY TIME 
+# RUN THIS COMMANDS, 192.168.94.25 DESTINATION IP
 # ssh-keygen
 # ssh-copy-id -i ~/.ssh/id_rsa.pub root@192.168.94.25
-# ABY PRZETESTOWAĆ:
+# TO TEST:
 # ssh pi@192.168.94.25
 
-# funkcja sprawdza czy dana sciezka istenieje i zaklada ja w razie potrzeby
+# function checks if given path exist and create if necessary
 checkPathAndCreate() {
 	if [ -d $1 ]; then
 		echo "Directory: $1 exist"
@@ -30,7 +30,7 @@ checkPathAndCreate() {
 	fi
 }
 
-# funkcja wstawia ifnormacje o wersji i rewizji do odpowiednich plików
+# function insert information about version and revision to suitable files
 insertDataToHtml() {
 	sed -i 's/'$1'/'$2'/g' ss-afa/html/index.html
 	sed -i 's/'$1'/'$2'/g' ss-afa/html/testo/index.html
