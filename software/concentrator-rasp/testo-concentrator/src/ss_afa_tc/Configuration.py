@@ -18,7 +18,7 @@ class Configuration:
     ##################################################################################################################
     configPath = '/opt/ss/testo/config.cfg'
     config = None
-    logger = None
+    #logger = None
     # parameters from config file
     # System    
     debug = False
@@ -43,21 +43,25 @@ class Configuration:
     # FUNCTIONS DEFINITION
     ##################################################################################################################
     # constructor        
-    def __init__(self, logger, path = '/opt/ss/testo/config.cfg'):
+    #def __init__(self, logger, path = '/opt/ss/testo/config.cfg'):
+    def __init__(self, path = '/opt/ss/testo/config.cfg'):
         self.configPath = path
-        self.logger = logger
+        #self.logger = logger
         self.config = ConfigParser.ConfigParser()
         try:
             ret = self.config.read(self.configPath)
             if (len(ret)==0):
-                self.logger.logWarning("Can't read config file: " + self.configPath, self)
+                #self.logger.logWarning("Can't read config file: " + self.configPath, self)
+                print "Can't read config file: " , self.configPath
                 self.setDeafultConfig()
                 self.parseConfig()
             else:
-                self.logger.logWarning("Loaded config file: " + self.configPath, self)
+                #self.logger.logWarning("Loaded config file: " + self.configPath, self)
+                print "Loaded config file: ", self.configPath
                 self.parseConfig()
         except ConfigParser.NoOptionError:
-            self.logger.logWarning("Can't parse config file: " + self.configPath, self)
+            #self.logger.logWarning("Can't parse config file: " + self.configPath, self)
+            print "Can't parse config file: ", self.configPath
             self.setDeafultConfig()
             self.parseConfig()
     
@@ -83,7 +87,8 @@ class Configuration:
                 
     # function create default values to parameters if file doesn't exist
     def setDeafultConfig(self):
-        self.logger.logText('Created default config file'+self.configPath, self)
+        #self.logger.logText('Created default config file'+self.configPath, self)
+        print 'Created default config file', self.configPath
         self.config = ConfigParser.ConfigParser()
         
         self.config.add_section('System')

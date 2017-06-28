@@ -22,7 +22,7 @@ class TestoConcentrator:
     ##################################################################################################################
     # contructor
     def __init__(self):
-        self.configuration = Configuration(self.logger)
+        self.configuration = Configuration()
 
     ##################################################################################################################
     # MAIN CODE
