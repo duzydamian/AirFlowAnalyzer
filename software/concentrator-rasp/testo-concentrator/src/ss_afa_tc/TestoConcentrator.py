@@ -8,13 +8,14 @@
 #
 
 from Configuration import Configuration
-from FileLogger import FileLogger
+import pygatt
+import logging
 
 class TestoConcentrator:
     ##################################################################################################################
     # variables
     ##################################################################################################################
-    logger = FileLogger()                   # initialisation of logger
+    #logger = FileLogger()                   # initialisation of logger
     configuration = None
     
     ##################################################################################################################
@@ -46,4 +47,34 @@ class TestoConcentrator:
         print "\t\t remoteUser:\t\t", self.configuration.remoteUser
         print "\t\t remotePass:\t\t", self.configuration.remotePass
         
-        print "main start"
+        #logger configuration
+        logging.basicConfig()
+        logging.getLogger('pygatt').setLevel(logging.WARN)
+        
+        try:
+            adapter = pygatt.GATTToolBackend()
+            print "Avaible adapter: ", adapter._hci_device\
+            
+            print "Starting bluetooth adapter"
+            adapter.start()
+            
+            connectedList = dict()
+            print "Enter main loop"
+            
+            try:
+                while 1:
+                    print "Searching devices [5s}..."
+                    devs = adapter.scan(timeout=5, run_as_root=True)
+                    for dev in devs:                    
+                        print "\tUrzadzenie ", dev["name"], " o adresie: ", dev["address"]
+                        if not (dev['name'] in connectedList):
+                            connectedList[dev["name"]] = dev["address"]
+                            
+                    
+                    adapter.reset()
+                    print connectedList
+            except KeyboardInterrupt:
+                print "Halt from keyboard"
+        finally:
+            print "Stopping bluetooth adapter"
+            adapter.stop()
