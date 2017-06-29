@@ -8,8 +8,11 @@
 #
 
 from Configuration import Configuration
+from TestoDevice import TestoDevice
 import pygatt
 import logging
+import sys
+
 
 class TestoConcentrator:
     ##################################################################################################################
@@ -52,11 +55,14 @@ class TestoConcentrator:
         logging.getLogger('pygatt').setLevel(logging.WARN)
         
         try:
-            adapter = pygatt.GATTToolBackend()
-            print "Avaible adapter: ", adapter._hci_device\
+            self.adapters = []
+            for i in range(0, self.configuration.maxDevicesCount):
+                self.adapters.append(pygatt.GATTToolBackend())
+            print "Created adapters count: ", len(self.adapters), self.adapters[0]._hci_device
             
-            print "Starting bluetooth adapter"
-            adapter.start()
+            print "Starting bluetooth adapters"
+            for adapter in self.adapters:
+                adapter.start()
             
             connectedList = dict()
             print "Enter main loop"
@@ -64,17 +70,22 @@ class TestoConcentrator:
             try:
                 while 1:
                     print "Searching devices [5s}..."
-                    devs = adapter.scan(timeout=5, run_as_root=True)
+                    devs = self.adapters[0].scan(timeout=5, run_as_root=True)
                     for dev in devs:                    
-                        print "\tUrzadzenie ", dev["name"], " o adresie: ", dev["address"]
+                        #print "\tUrzadzenie ", dev["name"], " o adresie: ", dev["address"]
                         if not (dev['name'] in connectedList):
-                            connectedList[dev["name"]] = dev["address"]
-                            
+                            newDevice = TestoDevice(dev["name"], dev["address"], self.adapters[len(connectedList)+1])
+                            print newDevice
+                            connectedList[dev["name"]] = newDevice
                     
-                    adapter.reset()
-                    print connectedList
+                    #print connectedList, type(connectedList)
+                    #if len(connectedList) <> 0:
+                    #    for device in connectedList:
+                    #        print "Device:\t", device#, device.battery, device.temperature, device.velocity
             except KeyboardInterrupt:
                 print "Halt from keyboard"
         finally:
-            print "Stopping bluetooth adapter"
-            adapter.stop()
+            print "Unexpected error:", sys.exc_info()[0]
+            print "Stopping bluetooth adapters"
+            for adapter in self.adapters:
+                adapter.stop()
