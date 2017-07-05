@@ -15,6 +15,7 @@ import time
 import sys
 import datetime
 import struct
+from DataFile import DataFile
 
 class TestoDevice(object):
     ##################################################################################################################
@@ -37,6 +38,9 @@ class TestoDevice(object):
         self.temperature = 0.0
         self.velocity = 0.0
         self.data_to_log = bytearray()
+        self.dataFileTemperature = DataFile(self.name, 'Temperature')
+        self.dataFileVelocity = DataFile(self.name, 'Velocity')
+        self.dataFileBatteryLevel = DataFile(self.name, 'BatteryLevel')
         
         print "Create testo device with name: ", self.name, " address: ", self.address
         self.connect()
@@ -95,14 +99,17 @@ class TestoDevice(object):
                     print (self.data_to_log[12:24] + ' '),
                     print (str(struct.unpack('f', self.data_to_log[24:28])[0]))
                     self.battery = struct.unpack('f', self.data_to_log[24:28])[0] 
+                    self.dataFileBatteryLevel.addRow(datetime.datetime.now().strftime("%H:%M:%S") ,self.battery)
                 if self.data_to_log[12]==0x54: #T > Temperature
                     print (self.data_to_log[12:23] + ' '),
                     print (str(struct.unpack('f', self.data_to_log[23:27])[0]))
-                    self.temperature = struct.unpack('f', self.data_to_log[23:27])[0] 
+                    self.temperature = struct.unpack('f', self.data_to_log[23:27])[0]
+                    self.dataFileTemperature.addRow(datetime.datetime.now().strftime("%H:%M:%S") ,self.temperature) 
                 if self.data_to_log[12]==0x56: #V > Velocity
                     print (self.data_to_log[12:20] + ' '),
                     print (str(struct.unpack('f', self.data_to_log[20:24])[0]))
                     self.velocity = struct.unpack('f', self.data_to_log[20:24])[0]
+                    self.dataFileVelocity.addRow(datetime.datetime.now().strftime("%H:%M:%S") ,self.velocity)
         
     def convert_str_bytearray(self, s):
         split_string = lambda x, n: [x[i:i+n] for i in range(0, len(x), n)]
